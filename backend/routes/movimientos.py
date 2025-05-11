@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from models import Movimiento
-from db import coleccion
+from backend.models import Movimiento
+from backend.db import coleccion
 from bson import ObjectId
 
 router = APIRouter()
