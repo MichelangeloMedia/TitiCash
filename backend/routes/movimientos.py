@@ -11,6 +11,8 @@ def movimiento_con_id(m):
     del m["_id"]
     return m
 
+
+
 #Get
 @router.get("/")
 def leer_movimiento():
