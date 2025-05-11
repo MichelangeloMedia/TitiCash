@@ -1,11 +1,13 @@
 <script>
+  import jsPDF from 'jspdf';
+  import autoTable from 'jspdf-autotable';
+
   export let movimientos = [];
+  export let desde = "";
+  export let hasta = "";
 
   let pagina = 1;
   const porPagina = 10;
-
-  let desde = ""; // fecha mínima
-  let hasta = ""; // fecha máxima
 
   // Filtrar ingresos por criterios
   $: filtrados = movimientos.filter(m =>
@@ -26,6 +28,27 @@
   }
 
   $: if (pagina > totalPaginas) pagina = 1;
+
+  function exportarPDF() {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Facturación", 14, 20);
+
+    autoTable(doc, {
+      head: [["Fecha", "Descripción", "Categoría", "Monto"]],
+      body: filtrados.map(m => [
+        new Date(m.fecha).toLocaleDateString("es-AR"),
+        m.descripcion,
+        m.categoria,
+        `$${m.monto.toLocaleString("es-AR")}`
+      ]),
+      startY: 30
+    });
+
+    doc.setFontSize(14);
+    doc.text(`TOTAL A FACTURAR: $${totalFacturar.toLocaleString("es-AR")}`, 14, doc.lastAutoTable.finalY + 10);
+    doc.save("facturacion.pdf");
+  }
 </script>
 
 <div class="bg-white/40 backdrop-blur-sm rounded-xl p-4 shadow-md">
@@ -64,24 +87,32 @@
     </div>
   {/if}
 
- <!-- Total a facturar -->
-<div class={`text-xl sm:text-2xl font-bold text-center mt-4 ${
-  totalFacturar >= 880000 ? "text-red-700"
-  : totalFacturar >= 780000 ? "text-orange-500"
-  : "text-fuchsia-700"
-}`}>
-  TOTAL A FACTURAR: $ {totalFacturar.toLocaleString("es-AR")}
-</div>
+  <!-- Total a facturar -->
+  <div class={`text-xl sm:text-2xl font-bold text-center mt-4 ${
+    totalFacturar >= 880000 ? "text-red-700"
+    : totalFacturar >= 780000 ? "text-orange-500"
+    : "text-fuchsia-700"
+  }`}>
+    TOTAL A FACTURAR: $ {totalFacturar.toLocaleString("es-AR")}
+  </div>
 
-<!-- Mensaje condicional -->
-{#if totalFacturar >= 880000}
-  <p class="text-center mt-2 text-sm text-red-600 font-semibold">
-    Superaste tu total permitido
-  </p>
-{:else if totalFacturar >= 780000}
-  <p class="text-center mt-2 text-sm text-orange-500 font-semibold">
-    Estás a $ {(880000 - totalFacturar).toLocaleString("es-AR")} de alcanzar tu total permitido
-  </p>
-{/if}
+  <!-- Mensaje condicional -->
+  {#if totalFacturar >= 880000}
+    <p class="text-center mt-2 text-sm text-red-600 font-semibold">
+      Superaste tu total permitido
+    </p>
+  {:else if totalFacturar >= 780000}
+    <p class="text-center mt-2 text-sm text-orange-500 font-semibold">
+      Estás a $ {(880000 - totalFacturar).toLocaleString("es-AR")} de alcanzar tu total permitido
+    </p>
+  {/if}
 
+  <!-- Botón de exportar -->
+  <button
+    type="button"
+    on:click={exportarPDF}
+    class="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 w-full"
+  >
+    Exportar PDF
+  </button>
 </div>

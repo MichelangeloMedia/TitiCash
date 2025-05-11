@@ -68,19 +68,19 @@
   }
 </script>
 
-<div class="bg-white/40 backdrop-blur-sm rounded-xl p-4 shadow-md text-sm space-y-6">
-  <h3 class="text-lg font-bold text-center">Visualizaciones</h3>
+<div class="bg-white/30 backdrop-blur-lg rounded-xl p-4 shadow-xl text-sm space-y-6">
+  <h3 class="text-lg font-bold text-center text-gray-800">Visualizaciones</h3>
 
   {#if movimientos.length === 0}
     <p class="text-center text-gray-500 py-8">No hay datos para graficar.</p>
   {:else}
     <div>
-      <h4 class="font-semibold text-center mb-2">Distribución</h4>
+      <h4 class="font-semibold text-center mb-2 text-gray-700">Distribución</h4>
       <canvas bind:this={pieCanvas}></canvas>
     </div>
 
     <div>
-      <h4 class="font-semibold text-center mb-2">Ingresos mensuales</h4>
+      <h4 class="font-semibold text-center mb-2 text-gray-700">Ingresos mensuales</h4>
       <canvas bind:this={barCanvas}></canvas>
     </div>
   {/if}
