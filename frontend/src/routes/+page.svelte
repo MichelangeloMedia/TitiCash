@@ -6,8 +6,9 @@
   import Facturacion from '$lib/Facturacion.svelte';
   import ExportarMovimientos from '$lib/ExportarMovimientos.svelte';
   import ExportarFacturacion from '$lib/ExportarFacturacion.svelte';
+  import AuthGate from '$lib/AuthGate.svelte';
 
-  const API = import.meta.env.PUBLIC_API_URL;
+  const API = import.meta.env.VITE_API_URL;
 
   let movimientos = [];
   let tab = "ingresos";
@@ -43,6 +44,7 @@
   onMount(cargarMovimientos);
 </script>
 
+<AuthGate claveCorrecta ="titibaradero">
 <div class="min-h-screen w-full bg-gradient-to-b from-pink-200 via-pink-100 to-white text-gray-800 font-sans px-4 py-6">
   <h1 class="text-5xl sm:text-6xl font-extrabold text-center tracking-widest text-gray-900 relative mb-10 font-sans">
     <span class="relative z-10 drop-shadow-md">TITICASH</span>
@@ -84,6 +86,7 @@
     </div>
   </div>
 </div>
+</AuthGate>
 
 <style>
   button.selected {
