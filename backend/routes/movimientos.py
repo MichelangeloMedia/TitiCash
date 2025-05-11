@@ -11,7 +11,7 @@ def movimiento_con_id(m):
     del m["_id"]
     return m
 
-
+# McGuffin
 
 #Get
 @router.get("/")
