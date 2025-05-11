@@ -1,7 +1,0 @@
-{
-  "rootDirectory": "frontend",
-  "buildCommand": "npm install --legacy-peer-deps && npm run build",
-  "outputDirectory": "dist",
-  "ignoreCommand": "echo 'No files ignored'",
-  "framework": "vite"
-}
