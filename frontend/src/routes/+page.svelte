@@ -7,7 +7,7 @@
   import ExportarMovimientos from '$lib/ExportarMovimientos.svelte';
   import ExportarFacturacion from '$lib/ExportarFacturacion.svelte';
 
-  const API = "http://localhost:8001";
+  const API = import.meta.env.PUBLIC_API_URL;
 
   let movimientos = [];
   let tab = "ingresos";
