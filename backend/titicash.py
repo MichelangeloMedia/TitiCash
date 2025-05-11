@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import movimientos
+from backend.routes import movimientos
 
 app = FastAPI()
 
