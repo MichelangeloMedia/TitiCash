@@ -8,7 +8,7 @@
   import ExportarFacturacion from '$lib/ExportarFacturacion.svelte';
   import AuthGate from '$lib/AuthGate.svelte';
 
-  const API = import.meta.env.PUBLIC_API_URL;
+  const API = "https://titicash.onrender.com";
 
   let movimientos = [];
   let tab = "ingresos";
