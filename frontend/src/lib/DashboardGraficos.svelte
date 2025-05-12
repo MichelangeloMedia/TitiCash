@@ -1,6 +1,6 @@
 <script>
   import Chart from 'chart.js/auto';
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   export let movimientos = [];
 
   let pieChart, barChart, balanceChart, egresosCatChart, metodoChart;
@@ -93,25 +93,26 @@
     });
   }
 
-  $: if (activeTab === 'egresosCat' && movimientos.length) {
+  async function renderEgresosPorCategoria() {
     loadingChart = true;
     egresosCatChart?.destroy();
-
-    const egresosPorCategoria = movimientos
-      .filter(m => m.tipo === "Egreso")
-      .reduce((acc, m) => {
-        acc[m.categoria] = (acc[m.categoria] || 0) + m.monto;
-        return acc;
-      }, {});
-
-    const topCategorias = Object.entries(egresosPorCategoria)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
-
-    const etiquetasCat = topCategorias.map(([c]) => c);
-    const valoresCat = topCategorias.map(([, v]) => v);
+    await tick();
 
     setTimeout(() => {
+      const egresosPorCategoria = movimientos
+        .filter(m => m.tipo === "Egreso")
+        .reduce((acc, m) => {
+          acc[m.categoria] = (acc[m.categoria] || 0) + m.monto;
+          return acc;
+        }, {});
+
+      const topCategorias = Object.entries(egresosPorCategoria)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+      const etiquetasCat = topCategorias.map(([c]) => c);
+      const valoresCat = topCategorias.map(([, v]) => v);
+
       egresosCatChart = new Chart(egresosCatCanvas, {
         type: 'bar',
         data: {
@@ -129,24 +130,25 @@
         }
       });
       loadingChart = false;
-    }, 0);
+    }, 100);
   }
 
-  $: if (activeTab === 'metodo' && movimientos.length) {
+  async function renderIngresosPorMetodo() {
     loadingChart = true;
     metodoChart?.destroy();
-
-    const ingresosPorMetodo = movimientos
-      .filter(m => m.tipo === "Ingreso")
-      .reduce((acc, m) => {
-        acc[m.metodo] = (acc[m.metodo] || 0) + m.monto;
-        return acc;
-      }, {});
-
-    const etiquetasMetodo = Object.keys(ingresosPorMetodo);
-    const valoresMetodo = etiquetasMetodo.map(m => ingresosPorMetodo[m]);
+    await tick();
 
     setTimeout(() => {
+      const ingresosPorMetodo = movimientos
+        .filter(m => m.tipo === "Ingreso")
+        .reduce((acc, m) => {
+          acc[m.metodo] = (acc[m.metodo] || 0) + m.monto;
+          return acc;
+        }, {});
+
+      const etiquetasMetodo = Object.keys(ingresosPorMetodo);
+      const valoresMetodo = etiquetasMetodo.map(m => ingresosPorMetodo[m]);
+
       metodoChart = new Chart(metodoCanvas, {
         type: 'doughnut',
         data: {
@@ -161,7 +163,15 @@
         }
       });
       loadingChart = false;
-    }, 0);
+    }, 100);
+  }
+
+  $: if (activeTab === 'egresosCat' && movimientos.length) {
+    renderEgresosPorCategoria();
+  }
+
+  $: if (activeTab === 'metodo' && movimientos.length) {
+    renderIngresosPorMetodo();
   }
 </script>
 
