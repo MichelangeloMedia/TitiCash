@@ -80,16 +80,7 @@
         {#if tab === "movimientos"}
           <ExportarMovimientos {movimientos} bind:desde bind:hasta />
 
-          <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-4">
-            <label class="flex flex-col">
-              Desde:
-              <input type="date" bind:value={desde} class="p-2 border border-gray-300 rounded" />
-            </label>
-            <label class="flex flex-col">
-              Hasta:
-              <input type="date" bind:value={hasta} class="p-2 border border-gray-300 rounded" />
-            </label>
-          </div>
+ 
 
           <div class="mb-4 flex flex-col sm:flex-row gap-4 text-sm sm:text-base">
             <span class="text-green-700 font-semibold">
