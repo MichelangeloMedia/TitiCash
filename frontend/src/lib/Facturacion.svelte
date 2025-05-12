@@ -13,7 +13,7 @@
   $: filtrados = movimientos.filter(m =>
     m.tipo === "Ingreso" &&
     m.metodo === "Transferencia" &&
-    m.monto > 10000 &&
+    m.monto >= 10000 &&
     (!desde || new Date(m.fecha) >= new Date(desde)) &&
     (!hasta || new Date(m.fecha) <= new Date(hasta))
   );
