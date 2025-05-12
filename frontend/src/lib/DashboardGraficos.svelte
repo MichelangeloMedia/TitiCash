@@ -6,6 +6,7 @@
   let pieChart, barChart, balanceChart, egresosCatChart, metodoChart;
   let pieCanvas, barCanvas, balanceCanvas, egresosCatCanvas, metodoCanvas;
   let activeTab = 'distribucion';
+  let loadingChart = false;
 
   function limpiarCharts() {
     pieChart?.destroy();
@@ -93,6 +94,7 @@
   }
 
   $: if (activeTab === 'egresosCat' && movimientos.length) {
+    loadingChart = true;
     egresosCatChart?.destroy();
 
     const egresosPorCategoria = movimientos
@@ -102,28 +104,36 @@
         return acc;
       }, {});
 
-    const etiquetasCat = Object.keys(egresosPorCategoria);
-    const valoresCat = etiquetasCat.map(c => egresosPorCategoria[c]);
+    const topCategorias = Object.entries(egresosPorCategoria)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
 
-    egresosCatChart = new Chart(egresosCatCanvas, {
-      type: 'bar',
-      data: {
-        labels: etiquetasCat,
-        datasets: [{
-          label: 'Egresos por categoría',
-          data: valoresCat,
-          backgroundColor: '#ef4444'
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        scales: { x: { beginAtZero: true } },
-        plugins: { legend: { display: false } }
-      }
-    });
+    const etiquetasCat = topCategorias.map(([c]) => c);
+    const valoresCat = topCategorias.map(([, v]) => v);
+
+    setTimeout(() => {
+      egresosCatChart = new Chart(egresosCatCanvas, {
+        type: 'bar',
+        data: {
+          labels: etiquetasCat,
+          datasets: [{
+            label: 'Egresos por categoría',
+            data: valoresCat,
+            backgroundColor: '#ef4444'
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          scales: { x: { beginAtZero: true } },
+          plugins: { legend: { display: false } }
+        }
+      });
+      loadingChart = false;
+    }, 0);
   }
 
   $: if (activeTab === 'metodo' && movimientos.length) {
+    loadingChart = true;
     metodoChart?.destroy();
 
     const ingresosPorMetodo = movimientos
@@ -136,19 +146,22 @@
     const etiquetasMetodo = Object.keys(ingresosPorMetodo);
     const valoresMetodo = etiquetasMetodo.map(m => ingresosPorMetodo[m]);
 
-    metodoChart = new Chart(metodoCanvas, {
-      type: 'doughnut',
-      data: {
-        labels: etiquetasMetodo,
-        datasets: [{
-          data: valoresMetodo,
-          backgroundColor: ['#10b981', '#3b82f6', '#f59e0b']
-        }]
-      },
-      options: {
-        plugins: { legend: { position: 'bottom' } }
-      }
-    });
+    setTimeout(() => {
+      metodoChart = new Chart(metodoCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: etiquetasMetodo,
+          datasets: [{
+            data: valoresMetodo,
+            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b']
+          }]
+        },
+        options: {
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+      loadingChart = false;
+    }, 0);
   }
 </script>
 
@@ -187,6 +200,9 @@
     {/if}
 
     {#if activeTab === 'egresosCat'}
+      {#if loadingChart}
+        <p class="text-center text-sm text-gray-500">Cargando gráfico...</p>
+      {/if}
       <div>
         <h4 class="font-semibold text-center mb-2 text-gray-700">Egresos por categoría</h4>
         <canvas bind:this={egresosCatCanvas} class="w-full max-w-full"></canvas>
@@ -194,6 +210,9 @@
     {/if}
 
     {#if activeTab === 'metodo'}
+      {#if loadingChart}
+        <p class="text-center text-sm text-gray-500">Cargando gráfico...</p>
+      {/if}
       <div>
         <h4 class="font-semibold text-center mb-2 text-gray-700">Ingresos por método</h4>
         <canvas bind:this={metodoCanvas} class="w-full max-w-full"></canvas>
