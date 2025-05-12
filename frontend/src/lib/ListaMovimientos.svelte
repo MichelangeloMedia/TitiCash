@@ -59,7 +59,7 @@
           {m.metodo === "Efectivo" ? " 💸" : ""}
           {m.metodo === "Transferencia" ? " 💳" : ""}
           {m.metodo === "Transferencia" && m.tipo === "Ingreso" && m.monto >= 10000 ? " 🧾" : ""}
-        </span>
+         </span>
         – {m.descripcion} ({m.categoria})
       </span>
       <div class="flex items-center gap-2 justify-between sm:justify-end">
