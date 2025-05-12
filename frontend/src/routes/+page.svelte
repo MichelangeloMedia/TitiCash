@@ -10,6 +10,9 @@
 
   const API = import.meta.env.PUBLIC_API_URL;
 
+  console.log("PUBLIC_API_URL:", import.meta.env.PUBLIC_API_URL);
+
+
   let movimientos = [];
   let tab = "ingresos";
   let busqueda = "";
