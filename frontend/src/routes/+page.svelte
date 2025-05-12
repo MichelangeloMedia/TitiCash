@@ -9,11 +9,8 @@
   import AuthGate from '$lib/AuthGate.svelte';
   import { PUBLIC_API_URL } from '$env/static/public';
 
-  const API = {PUBLIC_API_URL}
-
-
-  console.log("PUBLIC_API_URL:", PUBLIC_API_URL)
-
+  const API = PUBLIC_API_URL;
+  console.log("PUBLIC_API_URL:", PUBLIC_API_URL);
 
   let movimientos = [];
   let tab = "ingresos";
