@@ -1,5 +1,5 @@
 import vercel from '@sveltejs/adapter-vercel';
-import preprocess from 'svelte-preprocess';
+import  { sveltePreprocess } from 'svelte-preprocess';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -9,7 +9,7 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: vercel()
 	},
-	preprocess: preprocess()
+	preprocess: sveltePreprocess()
 };
 
 export default config;

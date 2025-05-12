@@ -1,34 +1,51 @@
 <script>
-  export let claveCorrecta = "juanabaradero";
-  let claveIngresada = "";
-  let autorizado = localStorage.getItem("autorizado") === "sí";
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
+  export let claveCorrecta = "titibaradero";
 
-  function validar() {
+  let claveIngresada = "";
+  let autenticado = false;
+
+  onMount(() => {
+    if (browser) {
+      const guardada = localStorage.getItem("clave");
+      if (guardada === claveCorrecta) {
+        autenticado = true;
+      }
+    }
+  });
+
+  function verificarClave() {
     if (claveIngresada === claveCorrecta) {
-      localStorage.setItem("autorizado", "sí");
-      autorizado = true;
+      autenticado = true;
+      if (browser) {
+        localStorage.setItem("clave", claveCorrecta);
+      }
     } else {
       alert("Clave incorrecta");
     }
   }
 </script>
 
-{#if autorizado}
+{#if autenticado}
   <slot />
 {:else}
-  <div class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-pink-200 to-fuchsia-300 p-4">
-    <h1 class="text-3xl font-bold mb-6">🔐 Acceso restringido</h1>
-    <input
-      type="password"
-      placeholder="Ingresá la clave"
-      bind:value={claveIngresada}
-      class="p-2 border border-gray-300 rounded mb-4 w-64 text-center"
-    />
-    <button
-      on:click={validar}
-      class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
-    >
-      Ingresar
-    </button>
+  <div class="min-h-screen flex items-center justify-center bg-pink-100 text-center p-4">
+    <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full space-y-4">
+      <h2 class="text-lg font-semibold text-gray-800">Acceso restringido</h2>
+      <input
+        type="password"
+        bind:value={claveIngresada}
+        class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-pink-400"
+        placeholder="Ingresá la clave"
+        on:keydown={(e) => e.key === 'Enter' && verificarClave()}
+      />
+      <button
+        on:click={verificarClave}
+        class="w-full bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition"
+      >
+        Ingresar
+      </button>
+    </div>
   </div>
 {/if}
