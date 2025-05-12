@@ -13,36 +13,49 @@
     return desdeOk && hastaOk;
   });
 
-async function exportarPDF() {
-  if (!jsPDF) {
-    const jsPDFModule = await import('jspdf');
-    jsPDF = jsPDFModule.default || jsPDFModule;
+  $: totalIngresos = filtrados
+    .filter(m => m.tipo === "Ingreso")
+    .reduce((acc, m) => acc + m.monto, 0);
+
+  $: totalEgresos = filtrados
+    .filter(m => m.tipo === "Egreso")
+    .reduce((acc, m) => acc + m.monto, 0);
+
+  async function exportarPDF() {
+    if (!jsPDF) {
+      const jsPDFModule = await import('jspdf');
+      jsPDF = jsPDFModule.default || jsPDFModule;
+    }
+
+    if (!autoTable) {
+      const autoTableModule = await import('jspdf-autotable');
+      autoTable = autoTableModule.default || autoTableModule;
+    }
+
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Movimientos", 14, 20);
+
+    autoTable(doc, {
+      head: [["Fecha", "Tipo", "Descripción", "Categoría", "Monto", "Método"]],
+      body: filtrados.map(m => [
+        new Date(m.fecha).toLocaleDateString("es-AR"),
+        m.tipo,
+        m.descripcion,
+        m.categoria,
+        `$${m.monto.toLocaleString("es-AR")}`,
+        m.metodo
+      ]),
+      startY: 30
+    });
+
+    const y = doc.lastAutoTable?.finalY || 40;
+    doc.setFontSize(14);
+    doc.text(`TOTAL INGRESOS: $${totalIngresos.toLocaleString("es-AR")}`, 14, y + 10);
+    doc.text(`TOTAL EGRESOS: $${totalEgresos.toLocaleString("es-AR")}`, 14, y + 20);
+
+    doc.save("movimientos.pdf");
   }
-
-  if (!autoTable) {
-    const autoTableModule = await import('jspdf-autotable');
-    autoTable = autoTableModule.default || autoTableModule;
-  }
-
-  const doc = new jsPDF();
-  doc.setFontSize(16);
-  doc.text("Movimientos", 14, 20);
-
-  autoTable(doc, {
-  head: [["Fecha", "Tipo", "Descripción", "Categoría", "Monto", "Método"]],
-  body: filtrados.map(m => [
-    new Date(m.fecha).toLocaleDateString("es-AR"),
-    m.tipo,
-    m.descripcion,
-    m.categoria,
-    `$${m.monto.toLocaleString("es-AR")}`,
-    m.metodo
-  ]),
-  startY: 30
-});
-
-  doc.save("movimientos.pdf");
-}
 </script>
 
 <div class="space-y-4 mb-6 text-sm">
