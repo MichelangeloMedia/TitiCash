@@ -11,8 +11,6 @@
     pieChart?.destroy();
     barChart?.destroy();
     balanceChart?.destroy();
-    egresosCatChart?.destroy();
-    metodoChart?.destroy();
   }
 
   function scrollToTop() {
@@ -92,6 +90,10 @@
         plugins: { legend: { display: false } }
       }
     });
+  }
+
+  $: if (activeTab === 'egresosCat' && movimientos.length) {
+    egresosCatChart?.destroy();
 
     const egresosPorCategoria = movimientos
       .filter(m => m.tipo === "Egreso")
@@ -119,6 +121,10 @@
         plugins: { legend: { display: false } }
       }
     });
+  }
+
+  $: if (activeTab === 'metodo' && movimientos.length) {
+    metodoChart?.destroy();
 
     const ingresosPorMetodo = movimientos
       .filter(m => m.tipo === "Ingreso")
