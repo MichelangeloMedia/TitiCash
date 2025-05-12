@@ -4,6 +4,7 @@ from backend.routes import movimientos
 
 app = FastAPI()
 
+# Titicash
 # Habilita CORS para conectar con Svelte
 app.add_middleware(
     CORSMiddleware,
