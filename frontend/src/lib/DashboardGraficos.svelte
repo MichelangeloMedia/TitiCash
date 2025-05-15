@@ -133,44 +133,53 @@
     }, 100);
   }
 
-  async function renderIngresosPorMetodo() {
+    async function renderIngresosPorCategoria() {
     loadingChart = true;
-    metodoChart?.destroy();
+    ingresosCatChart?.destroy();
     await tick();
 
     setTimeout(() => {
-      const ingresosPorMetodo = movimientos
+      const ingresosPorCategoria = movimientos
         .filter(m => m.tipo === "Ingreso")
         .reduce((acc, m) => {
-          acc[m.metodo] = (acc[m.metodo] || 0) + m.monto;
+          acc[m.categoria] = (acc[m.categoria] || 0) + m.monto;
           return acc;
         }, {});
 
-      const etiquetasMetodo = Object.keys(ingresosPorMetodo);
-      const valoresMetodo = etiquetasMetodo.map(m => ingresosPorMetodo[m]);
+      const topCategorias = Object.entries(ingresosPorCategoria)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
 
-      metodoChart = new Chart(metodoCanvas, {
-        type: 'doughnut',
+      const etiquetasCat = topCategorias.map(([c]) => c);
+      const valoresCat = topCategorias.map(([, v]) => v);
+
+      ingresosCatChart = new Chart(ingresosCatCanvas, {
+        type: 'bar',
         data: {
-          labels: etiquetasMetodo,
+          labels: etiquetasCat,
           datasets: [{
-            data: valoresMetodo,
-            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b']
+            label: 'Ingresos por categoría',
+            data: valoresCat,
+            backgroundColor: '#ef4444'
           }]
         },
         options: {
-          plugins: { legend: { position: 'bottom' } }
+          indexAxis: 'y',
+          scales: { x: { beginAtZero: true } },
+          plugins: { legend: { display: false } }
         }
       });
       loadingChart = false;
     }, 100);
   }
 
+  
+
   $: if (activeTab === 'egresosCat' && movimientos.length) {
     renderEgresosPorCategoria();
   }
 
-  $: if (activeTab === 'metodo' && movimientos.length) {
+  $: if (activeTab === 'ingresosCat' && movimientos.length) {
     renderIngresosPorMetodo();
   }
 </script>
@@ -185,7 +194,7 @@
       <button on:click={() => activeTab = 'ingresos'} class:font-bold={activeTab === 'ingresos'}>Ingresos por mes</button>
       <button on:click={() => activeTab = 'balance'} class:font-bold={activeTab === 'balance'}>Balance mensual</button>
       <button on:click={() => activeTab = 'egresosCat'} class:font-bold={activeTab === 'egresosCat'}>Egresos por categoría</button>
-      <button on:click={() => activeTab = 'metodo'} class:font-bold={activeTab === 'metodo'}>Ingresos por método</button>
+      <button on:click={() => activeTab = 'ingresosCat'} class:font-bold={activeTab === 'ingresosCat'}>Ingresos por categoría</button>
     </div>
 
     {#if activeTab === 'distribucion'}
@@ -224,8 +233,8 @@
         <p class="text-center text-sm text-gray-500">Cargando gráfico...</p>
       {/if}
       <div>
-        <h4 class="font-semibold text-center mb-2 text-gray-700">Ingresos por método</h4>
-        <canvas bind:this={metodoCanvas} class="w-full max-w-full"></canvas>
+        <h4 class="font-semibold text-center mb-2 text-gray-700">Ingresos por categoría</h4>
+        <canvas bind:this={ingresosCatCanvas} class="w-full max-w-full"></canvas>
       </div>
     {/if}
 
