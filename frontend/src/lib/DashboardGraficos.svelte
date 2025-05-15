@@ -180,7 +180,7 @@
   }
 
   $: if (activeTab === 'ingresosCat' && movimientos.length) {
-    renderIngresosPorMetodo();
+    renderIngresosPorCategoria();
   }
 </script>
 
