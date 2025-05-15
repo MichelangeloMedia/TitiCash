@@ -3,8 +3,8 @@
   import { onMount, tick } from 'svelte';
   export let movimientos = [];
 
-  let pieChart, barChart, balanceChart, egresosCatChart, metodoChart;
-  let pieCanvas, barCanvas, balanceCanvas, egresosCatCanvas, metodoCanvas;
+  let pieChart, barChart, balanceChart, egresosCatChart, ingresosCatChart;
+  let pieCanvas, barCanvas, balanceCanvas, egresosCatCanvas, ingresosCatCanvas;
   let activeTab = 'distribucion';
   let loadingChart = false;
 
