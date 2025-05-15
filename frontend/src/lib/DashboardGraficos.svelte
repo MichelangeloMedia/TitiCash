@@ -228,7 +228,7 @@
       </div>
     {/if}
 
-    {#if activeTab === 'metodo'}
+    {#if activeTab === 'ingresosCat'}
       {#if loadingChart}
         <p class="text-center text-sm text-gray-500">Cargando gráfico...</p>
       {/if}
